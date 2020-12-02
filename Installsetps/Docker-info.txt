@@ -1,0 +1,59 @@
+Docker 
+
+Advantages of Docker
+* portability
+* lessresource usage
+* isolation
+* speed
+* autoscaling
+
+### each container has its own individual user space
+
+# we can user already built images from github
+   DOCKER RUN 
+   docker run -d -p 80:80 nginix  
+    -d meansd detached mode -p means port maping to container and node
+
+    docker ps ----will display running containers
+    docker ps -a  shows running and stopped containers
+    docker ps -a -q wills shows one line all container ID'shows
+    docker run -v D:/Foldername:/usr/lib -d -p 8081:8080 tomcat:8
+    -v will map local disk to container
+
+ ##### Docker Build topics
+
+ FROM 
+ MAINTAINER (old docker)
+ LABLE (New Versions)
+ RUN 
+ EXPOSE
+ CMD
+ WORKPOINT
+
+ FROM:  Parent inamge pull
+ Maintainer  :   Auther name or organization
+ LABEL  : Same as  Maintainer
+ RUN execute connads for install needed softwares (Build time)
+ EXPOSE  :  port number intialization
+ CMD  :  Execute commands when container running time    
+ ENTRYPOINT : Execute command run time not modifieble at container run time
+
+
+mkdir images
+cd images 
+
+ Docker Image Build
+
+ ########################
+ vi DOckerfile
+ ---------------
+ FROM : ubuntu
+ MAINTAINER: KCMOULI
+ RUN apt-get update && apt-get install tomcat8
+ EXPOSE: 8080
+ CMD ['catalina.sh' 'run']
+
+docker image build command
+docker build -t mytomcat:2.0 . 
+' .' meas docker file path if we execute above command we can mention Dockerfile path 
+

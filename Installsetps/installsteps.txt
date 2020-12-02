@@ -1,0 +1,80 @@
+DOcker install steps
+-----------------------
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh get-docker.sh
+
+Docker COmpose install
+==========================
+ sudo apt  install docker-compose
+
+docker-compose -v
+
+JDK install
+----------------
+
+apt-cache search jdk
+sudo apt install openjdk-8-jdk -y
+
+Jenkins install
+----------------
+sudo apt update
+wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+wget -q -O - http://pkg.jenkins-ci.org/debian-stable-rc/jenkins-ci.org.key | sudo apt-key add -
+sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'	
+sudo apt-get update
+sudo apt-get install jenkins
+
+
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FCEF32E745F2C3D5
+Maven Install
+------------------
+cd /tmp/
+wget https://mirrors.estointernet.in/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+cd /opt/
+sudo tar -xvzf /tmp/apache-maven-3.6.3-bin.tar.gz
+ls
+cd apache-maven-3.6.3/
+chmod g+w,o+w apache-maven-3.6.3
+# edit /etc/environment and the following lines to the end
+M2_HOME=/opt/apache-maven-3.6.3
+PATH=$PATH:$M2_HOME/bin
+
+Jfrogartifactory installation
+-----------------------
+Install in t2 mediam machine
+down load Linux debian
+wget https://akamai.bintray.com/3e/3ebf8e9c43d7da605be8c9cccb995e9b589333a663d78f37f33c2ef0e4e7ce36?__gda__=exp=1601808813~hmac=1a4f8a0f1b25eac94c3f786e03cfff85aa569887748d8ae7cfa98e0458b03668&response-content-disposition=attachment%3Bfilename%3D%22jfrog-artifactory-oss-7.9.0.deb%22&response-content-type=application%2Foctet-stream&requestInfo=U2FsdGVkX18Z5EiG-QKTSggfzvkxIuDzGJNVxMqJdoW3KWsh1uKs2X6NIixW71_HyDkD3OaZG2K1L89uy47V1b-MA8QOF7-g0PIKVkvb13hd06GRo8Lrnkx7FDdHnQ06HyY-8rwyGauVsrDpwSnvZ3eatfNq-vIy9TounLaf_Jb9vf9CaEj73l-v52zK-ylF&response-X-Checksum-Sha1=1c16866c44609c130ea3a1c9c27e532807dcff23&response-X-Checksum-Sha2=3ebf8e9c43d7da605be8c9cccb995e9b589333a663d78f37f33c2ef0e4e7ce36
+
+sudo dpkg -i jfrog-artifactory-oss-7.9.0.deb
+sudo systemctl enable jfrogartifactory.service
+sudo systemctl start jfrogartifactory.service
+sudo systemctl service jfrogartifactory.service
+
+URL for access provide admin/admin as credentias
+https:<hostname>:8082/ui/login
+after login change password and select whic ever repositorie you needed
+
+Sonarqube installation
+-----------------------------------
+
+update below entry in /etc/apt/sourcelist
+ dec[trusted=yes] http://downloads.sourceforge.net/project/sonar-pkg/deb binary/
+
+ ## sudo apt update
+ ## sudo apt-cache madison sonar | less 
+ ## sudo apt install sonar -yes
+ ## sudo systemctl service enable sonar
+ ## sudo systemctl service status sonar
+ ## sudo systemctl service start sonar
+  URL:
+  http://<hostname>:9000
+  genarate tokenkey and preservr it select which type of project (java,dotnet etc)
+  
+
+Ansible Install
+
+sudo apt update
+$ sudo apt install software-properties-common
+$ sudo apt-add-repository --yes --update ppa:ansible/ansible
+$ sudo apt install ansible
+

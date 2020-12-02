@@ -1,0 +1,300 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "My First CFT",
+    "Parameters": {
+        "subnet1az": {
+            "Description": "Enter Subnet 1",
+            "Type": "AWS::EC2::AvailabilityZone::Name"
+        },
+        "subnet2az": {
+            "Description": "Enter Subnet 2",
+            "Type": "AWS::EC2::AvailabilityZone::Name"
+        },
+        "subnet3az": {
+            "Description": "Enter Subnet 3",
+            "Type": "AWS::EC2::AvailabilityZone::Name"
+        },
+        "keypair": {
+            "Description": "Keypairadded",
+            "Type": "AWS::EC2::KeyPair::KeyName"
+        }
+    },
+    "Mappings": {
+        "UbuntuImageMap": {
+            "us-east-1": {
+                "AMI": "ami-0817d428a6fb68645"
+            },
+            "us-east-2": {
+                "AMI": "ami-0e82959d4ed12de3f"
+            },
+            "ap-south-1": {
+                "AMI": "ami-03f0fd1a2ba530e75"
+            }
+        }
+    },
+    "Resources": {
+        "myvpc": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "CidrBlock": "192.168.0.0/24",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "FirstCFVPC"
+                    }
+                ]
+            }
+        },
+        "mysubnet1": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Ref": "subnet1az"
+                },
+                "CidrBlock": "192.168.0.0/26",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "CF subnet"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "myvpc"
+                }
+            }
+        },
+        "mysubnet2": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Ref": "subnet2az"
+                },
+                "CidrBlock": "192.168.0.64/26",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "CF subnet"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "myvpc"
+                }
+            }
+        },
+        "mysubnet3": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Ref": "subnet3az"
+                },
+                "CidrBlock": "192.168.0.128/26",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "CF subnet"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "myvpc"
+                }
+            }
+        },
+        "myigw": {
+            "Type": "AWS::EC2::InternetGateway",
+            "Properties": {
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "CF InternetGTY"
+                    }
+                ]
+            }
+        },
+        "AttachGateway": {
+            "Type": "AWS::EC2::VPCGatewayAttachment",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myvpc"
+                },
+                "InternetGatewayId": {
+                    "Ref": "myigw"
+                }
+            }
+        },
+        "myrt": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "myvpc"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "CF Route Table"
+                    }
+                ]
+            }
+        },
+        "igwroute": {
+            "Type": "AWS::EC2::Route",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "myrt"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": {
+                    "Ref": "myigw"
+                }
+            }
+        },
+        "subnet1asson": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "mysubnet1"
+                },
+                "RouteTableId": {
+                    "Ref": "myrt"
+                }
+            }
+        },
+        "subnet2asson": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "mysubnet2"
+                },
+                "RouteTableId": {
+                    "Ref": "myrt"
+                }
+            }
+        },
+        "subnet3asson": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "mysubnet3"
+                },
+                "RouteTableId": {
+                    "Ref": "myrt"
+                }
+            }
+        },
+        "openall": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Open SSH Port",
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": "0.0.0.0/0",
+                        "Description": "Opensshport",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "IpProtocol": "tcp"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "myvpc"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "SecurityGroup"
+                    }
+                ]
+            }
+        },
+        "apache1": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "KeyName": {
+                    "Ref": "keypair"
+                },
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "UbuntuImageMap",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "InstanceType": "t2.micro",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Apache1"
+                    }
+                ],
+                "NetworkInterfaces": [
+                    {
+                        "AssociatePublicIpAddress": true,
+                        "DeviceIndex": "0",
+                        "DeleteOnTermination": true,
+                        "GroupSet": [
+                            {
+                                "Ref": "openall"
+                            }
+                        ],
+                        "SubnetId": {
+                            "Ref": "mysubnet1"
+                        }
+                    }
+                ]
+            }
+        },
+        "apache2": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "KeyName": {
+                    "Ref": "keypair"
+                },
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "UbuntuImageMap",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "InstanceType": "t2.micro",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Apache2"
+                    }
+                ],
+                "NetworkInterfaces": [
+                    {
+                        "AssociatePublicIpAddress": true,
+                        "DeviceIndex": "0",
+                        "DeleteOnTermination": true,
+                        "GroupSet": [
+                            {
+                                "Ref": "openall"
+                            }
+                        ],
+                        "SubnetId": {
+                            "Ref": "mysubnet2"
+                        }
+                    }
+                ]
+            }
+        }
+       
+    },
+    "Outputs": {
+
+        "apache1publicip": {
+            "Value": {
+                "Fn::GetAtt": ["apache1","PublicIp"]
+            }
+        },
+        "apache2publicip": {
+            "Value": {
+                "Fn::GetAtt": ["apache2","PublicIp"]
+            }
+        }
+    }
+}

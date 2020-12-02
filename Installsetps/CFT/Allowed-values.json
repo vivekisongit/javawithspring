@@ -1,0 +1,92 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "My First CFT",
+    "Parameters": {
+        "subnet1az": {
+            "Description": "Enter Subnet 1",
+            "Type": "String",
+            "Default": "us-west-2a",
+            "AllowedValues":["us-west-2a" ,"us-west-2b","us-west-2c"]
+        },
+        "subnet2az": {
+            "Description": "Enter Subnet 2",
+            "Type": "String",
+            "Default": "us-west-2b",
+            "AllowedValues":["us-west-2a" ,"us-west-2b","us-west-2c"]
+        },
+        "subnet3az": {
+            "Description": "Enter Subnet 3",
+            "Type": "String",
+            "Default": "us-west-2c",
+            "AllowedValues":["us-west-2a" ,"us-west-2b","us-west-2c"]
+        }
+    },
+    "Resources": {
+        "myvpc": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "CidrBlock": "192.168.0.0/24",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "FirstCFVPC"
+                    }
+                ]
+            }
+        },
+        "mysubnet1": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone":{
+                    "Ref": "subnet1az"
+                },
+                "CidrBlock": "192.168.0.0/26",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "CF subnet"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "myvpc"
+                }
+            }
+        },
+        "mysubnet2": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Ref": "subnet2az"
+                },
+                "CidrBlock": "192.168.0.64/26",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "CF subnet"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "myvpc"
+                }
+            }
+        },
+        "mysubnet3": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Ref": "subnet3az"
+                },
+                "CidrBlock": "192.168.0.128/26",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "CF subnet"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "myvpc"
+                }
+            }
+        },
+    }
+}

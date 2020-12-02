@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-depl
+  labels:
+    app: native
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: native
+  template:
+    metadata:
+      labels:
+        app: native
+    spec:
+      containers:
+      - name: app-depl
+        image: rajanirr/devops-angular-client:latest
+        ports:
+        - containerPort: 80

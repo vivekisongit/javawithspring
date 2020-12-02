@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+   - name: Installing git
+     apt:
+       name: git
+       state: present
+       update-cache: yes
+   - name: installing apache2
+     apt:
+      name: apache2
+      state: present
+     notify:
+      restart apache
+     handler:
+      name: restart apache
+      state: restarted
+     file:
+      src: /opt/playbooks/test/info.php
+      dest: /var/www/info.php
